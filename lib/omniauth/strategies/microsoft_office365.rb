@@ -28,6 +28,7 @@ module OmniAuth
           mobile_phone:    raw_info["mobilePhone"],
           office_phone:    raw_info["officePhone"],
           image:           avatar_file,
+          roles:           roles
         }
       end
 
@@ -54,6 +55,14 @@ module OmniAuth
       end
 
       private
+
+      def id_token
+        @id_token ||= JWT.decode(access_token.params['id_token'], nil, false).first
+      end
+
+      def roles
+        id_token['roles'] || []
+      end
 
       def callback_url
         options[:redirect_uri] || (full_host + script_name + callback_path)
